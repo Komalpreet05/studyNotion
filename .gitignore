@@ -1,0 +1,51 @@
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore node_modules folder
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore dependency directories
+vendor/
+venv/
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore environment variable files
+.env
+
+# Ignore compiled files
+*.pyc
+*.class
+*.o
+*.out
+
+# Ignore coverage reports
+coverage/
+*.cover
+*.coverage
+*.cov
+*.gcov
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*.old
+*.orig
+
+# Ignore package-lock.json
+package-lock.json
+
+# Next.js build directory
+.next
+**/.next
