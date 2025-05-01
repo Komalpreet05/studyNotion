@@ -28,7 +28,7 @@ async function sendVerificationEmail(email, otp) {
     );
     console.log("Email sent successfully " + mailResponse);
   } catch (err) {
-    console.log("error occured while sendng mail" + err);
+    console.log("error occured while sendng mails: " + err);
     throw err;
   }
 }
