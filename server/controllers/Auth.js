@@ -3,6 +3,7 @@ const OTP = require("../models/OTP");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mailSender = require("../utils/mailSender");
 require("dotenv").config();
 
 //sendOTP
@@ -77,7 +78,6 @@ exports.signUp = async (req, res) => {
       password,
       confirmPassword,
       accountType,
-
       otp,
     } = req.body;
     //validate data
@@ -234,8 +234,44 @@ exports.login = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   // data from req body - old password, new password, confirm new password
+  const { oldPassword, newPassword, confirmPassword } = req.body;
   //validations
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required",
+    });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "New password and confirm password do not match",
+    });
+  }
+  if (newPassword === oldPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "New password and old password are same",
+    });
+  }
+  //crypt new password
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
   //update password in db
+  const updatedPassword = await User.findOneAndUpdate(
+    { email: req.user.email },
+    { password: hashedPassword },
+    { new: true }
+  );
   //send mail - password update
+  mailSender(
+    req.user.email,
+    "Password Update",
+    "Your password has been updated"
+  );
   //return response
+  return res.status(200).json({
+    success: true,
+    message: "Password updated successfully",
+  });
 };
