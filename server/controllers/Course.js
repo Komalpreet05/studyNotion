@@ -31,6 +31,8 @@ exports.createCourse = async (req, res) => {
     const userId = req.user.id;
     const instructorDetails = await User.findById(userId);
     console.log("Instructor details: " + instructorDetails);
+    //TODO: verify if user id and instructor id same here
+
     if (!instructorDetails) {
       return res.status(404).json({
         success: false,
@@ -75,6 +77,12 @@ exports.createCourse = async (req, res) => {
       { new: true }
     );
 
+    // await User.updateOne(_id:userId,{
+    //    $push: {
+    //       courses: newCourse._id,
+    //     },
+    // })
+
     //updating tag schema
     await Tags.findByIdAndUpdate(
       { _id: tag },
@@ -94,6 +102,38 @@ exports.createCourse = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: e.message,
+    });
+  }
+};
+
+//get all courses
+exports.showAllCourses = async (req, res) => {
+  try {
+    //todo: manipulate below statement while testing
+    const allCourses = await Course.find(
+      {},
+      {
+        courseName: true,
+        price: true,
+        thumbnail: true,
+        instructor: true,
+        studentsEnrolled: true,
+      }
+    )
+      .populate("instructor")
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      message: "Data for all courses fetched successfully",
+      data: allCourses,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Error while fetching courses data",
+      error: e.message,
     });
   }
 };
